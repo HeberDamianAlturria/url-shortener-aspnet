@@ -1,5 +1,7 @@
 using UrlShortener.Routers;
 
+using FluentValidation;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add CORS policy to allow all origins, methods, and headers.
@@ -16,6 +18,9 @@ builder.Services.AddCors(options =>
 // Add swagger services.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Add FluentValidation services. This will automatically register all validators in the assembly.
+builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly, includeInternalTypes: true);
 
 var app = builder.Build();
 
