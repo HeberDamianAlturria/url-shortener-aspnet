@@ -10,14 +10,10 @@ public static class UrlShortenerRouter
     {
         var urlShortenerGroup = app.MapGroup("/url-shortener").WithTags("Url Shortener");
 
-        urlShortenerGroup.MapPost("/shorten", (ShortenUrlRequestDto request) =>
-            {
-                return Results.Ok($"Shortened URL for {request.Url}");
-            })
+        urlShortenerGroup.MapPost("/shorten", ShortenPost)
             .WithRequestValidation<ShortenUrlRequestDto>()
             .WithName("ShortenUrl")
-            .Produces<string>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest);
+            .Produces<string>(StatusCodes.Status200OK);
 
         urlShortenerGroup.MapGet("/redirect", () => "Redirected URL")
             .WithName("RedirectUrl")
@@ -28,5 +24,10 @@ public static class UrlShortenerRouter
             .WithName("GetUrlStats")
             .Produces<string>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound);
+    }
+
+    public static IResult ShortenPost(ShortenUrlRequestDto request) 
+    {
+        return Results.Ok($"Shortened URL for {request.Url}");
     }
 }
