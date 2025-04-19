@@ -3,9 +3,9 @@ namespace UrlShortener.Validators;
 using FluentValidation;
 using UrlShortener.Dtos;
 
-public class ShortenUrlRequestValidator : AbstractValidator<ShortenUrlRequestDto>
+public class ShortenUrlRequestDtoValidator : AbstractValidator<ShortenUrlRequestDto>
 {
-    public ShortenUrlRequestValidator()
+    public ShortenUrlRequestDtoValidator()
     {
         RuleFor(x => x.Url)
             .NotEmpty().WithMessage("URL cannot be empty.")
