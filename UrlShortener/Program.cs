@@ -1,5 +1,7 @@
 using UrlShortener.Routers;
 using UrlShortener.Db;
+using UrlShortener.Repositories;
+using UrlShortener.Services;
 
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +29,11 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 // Add DbContext for URL shortener.
 builder.Services.AddDbContext<UrlShortenerDbContext>(options =>
     options.UseInMemoryDatabase("UrlShortenerDb"));
+
+// Add repositories and services.
+builder.Services.AddScoped<IUrlShortenerRepository, UrlShortenerRepository>();
+builder.Services.AddScoped<IUrlShortenerService, UrlShortenerService>();
+
 
 var app = builder.Build();
 
