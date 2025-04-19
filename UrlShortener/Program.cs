@@ -1,6 +1,8 @@
 using UrlShortener.Routers;
+using UrlShortener.Db;
 
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +23,10 @@ builder.Services.AddSwaggerGen();
 
 // Add FluentValidation services. This will automatically register all validators in the assembly.
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
+// Add DbContext for URL shortener.
+builder.Services.AddDbContext<UrlShortenerDbContext>(options =>
+    options.UseInMemoryDatabase("UrlShortenerDb"));
 
 var app = builder.Build();
 

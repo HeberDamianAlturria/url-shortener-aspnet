@@ -6,18 +6,18 @@ namespace UrlShortener.Filters;
 // This is the filter that validates the request using FluentValidation.
 public class ValidateRequestFilter<TRequest> : IEndpointFilter
 {
-    private readonly IValidator<TRequest> Validator;
+    private readonly IValidator<TRequest> _validator;
 
     public ValidateRequestFilter(IValidator<TRequest> validator)
     {
-        this.Validator = validator;
+        _validator = validator;
     }
 
     public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
         var request = context.Arguments.OfType<TRequest>().First();
 
-        var validationResult = await this.Validator.ValidateAsync(request, context.HttpContext.RequestAborted);
+        var validationResult = await _validator.ValidateAsync(request, context.HttpContext.RequestAborted);
 
         if (!validationResult.IsValid)
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
