@@ -25,7 +25,7 @@ public static class UrlShortenerRouter
             .Produces(StatusCodes.Status404NotFound);
 
         urlShortenerGroup
-            .MapGet("/{code}/stats", (string code) => "URL Stats")
+            .MapGet("/{code}/stats", GetVisitCount)
             .WithName("GetUrlStats")
             .Produces<string>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound);
@@ -97,6 +97,39 @@ public static class UrlShortenerRouter
         catch (Exception ex)
         {
             logger.LogError(ex, "An error occurred while redirecting the URL.");
+            return Results.Problem(
+                "An error occurred while processing your request.",
+                statusCode: StatusCodes.Status500InternalServerError
+            );
+        }
+    }
+
+    public static async Task<IResult> GetVisitCount(
+        string code,
+        IUrlShortenerService urlShortenerService,
+        ILogger<string> logger
+    )
+    {
+        try
+        {
+            var visitCount = await urlShortenerService.GetVisitCountAsync(code);
+
+            if (visitCount == null)
+            {
+                logger.LogWarning("Visit Count not found for code: {Code}", code);
+                return Results.NotFound(
+                    new ErrorResponseDto(
+                        Message: "Visit Count not found",
+                        Details: $"Visit Count not found for code: {code}."
+                    )
+                );
+            }
+
+            return Results.Ok(new VisitCountResponseDto(VisitCount: visitCount ?? 0));
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An error occurred while retrieving the visit count.");
             return Results.Problem(
                 "An error occurred while processing your request.",
                 statusCode: StatusCodes.Status500InternalServerError
