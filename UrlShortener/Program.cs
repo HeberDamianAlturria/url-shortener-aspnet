@@ -1,6 +1,7 @@
 using dotenv.net;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using UrlShortener.Db;
 using UrlShortener.Repositories;
 using UrlShortener.Routers;
@@ -46,6 +47,16 @@ builder.Services.AddDbContext<UrlShortenerDbContext>(options =>
 builder.Services.AddScoped<IUrlShortenerRepository, UrlShortenerRepository>();
 builder.Services.AddScoped<IUrlShortenerService, UrlShortenerService>();
 
+// Add Serilog for logging.
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
+    .MinimumLevel.Debug()
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+
 var app = builder.Build();
 
 // Use CORS policy.
@@ -54,6 +65,9 @@ app.UseCors("AllowAll");
 // Use Swagger middleware.
 app.UseSwagger();
 app.UseSwaggerUI();
+
+// Use Serilog request logging.
+app.UseSerilogRequestLogging();
 
 // Register the URL shortener routes.
 app.RegisterUrlShortenerRoutes();
