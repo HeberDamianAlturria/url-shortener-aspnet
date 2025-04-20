@@ -1,11 +1,10 @@
-using UrlShortener.Routers;
+using dotenv.net;
+using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using UrlShortener.Db;
 using UrlShortener.Repositories;
+using UrlShortener.Routers;
 using UrlShortener.Services;
-
-using FluentValidation;
-using dotenv.net;
-using Microsoft.EntityFrameworkCore;
 
 DotEnv.Load();
 
@@ -21,12 +20,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Add CORS policy to allow all origins, methods, and headers.
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
+    options.AddPolicy(
+        "AllowAll",
+        policy =>
+        {
+            policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+        }
+    );
 });
 
 // Add swagger services.
@@ -45,7 +45,6 @@ builder.Services.AddDbContext<UrlShortenerDbContext>(options =>
 // Add repositories and services.
 builder.Services.AddScoped<IUrlShortenerRepository, UrlShortenerRepository>();
 builder.Services.AddScoped<IUrlShortenerService, UrlShortenerService>();
-
 
 var app = builder.Build();
 

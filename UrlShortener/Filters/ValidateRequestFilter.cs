@@ -1,4 +1,3 @@
-
 using FluentValidation;
 
 namespace UrlShortener.Filters;
@@ -13,11 +12,17 @@ public class ValidateRequestFilter<TRequest> : IEndpointFilter
         _validator = validator;
     }
 
-    public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
+    public async ValueTask<object?> InvokeAsync(
+        EndpointFilterInvocationContext context,
+        EndpointFilterDelegate next
+    )
     {
         var request = context.Arguments.OfType<TRequest>().First();
 
-        var validationResult = await _validator.ValidateAsync(request, context.HttpContext.RequestAborted);
+        var validationResult = await _validator.ValidateAsync(
+            request,
+            context.HttpContext.RequestAborted
+        );
 
         if (!validationResult.IsValid)
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
@@ -29,9 +34,12 @@ public class ValidateRequestFilter<TRequest> : IEndpointFilter
 // This is an extension method to add the validation filter to the route handler builder.
 public static class ValidationExtensions
 {
-    public static RouteHandlerBuilder WithRequestValidation<TRequest>(this RouteHandlerBuilder builder)
+    public static RouteHandlerBuilder WithRequestValidation<TRequest>(
+        this RouteHandlerBuilder builder
+    )
     {
-        return builder.AddEndpointFilter<ValidateRequestFilter<TRequest>>()
+        return builder
+            .AddEndpointFilter<ValidateRequestFilter<TRequest>>()
             .ProducesValidationProblem();
     }
 }

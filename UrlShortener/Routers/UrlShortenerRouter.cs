@@ -1,10 +1,9 @@
 namespace UrlShortener.Routers;
 
+using FluentValidation;
 using UrlShortener.Dtos;
 using UrlShortener.Filters;
 using UrlShortener.Services;
-
-using FluentValidation;
 
 public static class UrlShortenerRouter
 {
@@ -12,17 +11,20 @@ public static class UrlShortenerRouter
     {
         var urlShortenerGroup = app.MapGroup("/").WithTags("Url Shortener");
 
-        urlShortenerGroup.MapPost("/shorten", ShortenPost)
+        urlShortenerGroup
+            .MapPost("/shorten", ShortenPost)
             .WithRequestValidation<ShortenUrlRequestDto>()
             .WithName("ShortenUrl")
             .Produces<string>(StatusCodes.Status200OK);
 
-        urlShortenerGroup.MapGet("/{code}", RedirectUrl)
+        urlShortenerGroup
+            .MapGet("/{code}", RedirectUrl)
             .WithName("RedirectUrl")
             .Produces<string>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound);
 
-        urlShortenerGroup.MapGet("/{code}/stats", (string code) => "URL Stats")
+        urlShortenerGroup
+            .MapGet("/{code}/stats", (string code) => "URL Stats")
             .WithName("GetUrlStats")
             .Produces<string>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound);
@@ -47,11 +49,17 @@ public static class UrlShortenerRouter
         }
         catch (Exception ex)
         {
-            return Results.Problem("An error occurred while processing your request.", statusCode: StatusCodes.Status500InternalServerError);
+            return Results.Problem(
+                "An error occurred while processing your request.",
+                statusCode: StatusCodes.Status500InternalServerError
+            );
         }
     }
 
-    public static async Task<IResult> RedirectUrl(string code, IUrlShortenerService urlShortenerService)
+    public static async Task<IResult> RedirectUrl(
+        string code,
+        IUrlShortenerService urlShortenerService
+    )
     {
         try
         {
@@ -66,7 +74,10 @@ public static class UrlShortenerRouter
         }
         catch (Exception ex)
         {
-            return Results.Problem("An error occurred while processing your request.", statusCode: StatusCodes.Status500InternalServerError);
+            return Results.Problem(
+                "An error occurred while processing your request.",
+                statusCode: StatusCodes.Status500InternalServerError
+            );
         }
     }
 }

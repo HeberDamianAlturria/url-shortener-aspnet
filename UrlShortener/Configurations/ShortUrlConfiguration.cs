@@ -1,10 +1,8 @@
 namespace UrlShortener.Configurations;
 
-using UrlShortener.Models;
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
+using UrlShortener.Models;
 
 public class ShortUrlConfiguration : IEntityTypeConfiguration<ShortUrlModel>
 {
@@ -14,31 +12,18 @@ public class ShortUrlConfiguration : IEntityTypeConfiguration<ShortUrlModel>
 
         builder.HasKey(e => e.Id);
 
-        builder.Property(e => e.Id)
-            .HasColumnName("id")
-            .ValueGeneratedOnAdd();
+        builder.Property(e => e.Id).HasColumnName("id").ValueGeneratedOnAdd();
 
-        builder.Property(e => e.OriginalUrl)
-            .HasColumnName("original_url")
-            .IsRequired();
+        builder.Property(e => e.OriginalUrl).HasColumnName("original_url").IsRequired();
 
-        builder.Property(e => e.ShortenedUrl)
-            .HasColumnName("shortened_url")
-            .IsRequired();
+        builder.Property(e => e.ShortenedUrl).HasColumnName("shortened_url").IsRequired();
 
-        builder.Property(e => e.Code)
-            .HasColumnName("code")
-            .IsRequired();
+        builder.Property(e => e.Code).HasColumnName("code").IsRequired();
 
-        builder.HasIndex(e => e.Code)
-            .IsUnique();
+        builder.HasIndex(e => e.Code).IsUnique();
 
-        builder.Property(e => e.VisitCount)
-            .HasColumnName("visit_count")
-            .IsRequired();
+        builder.Property(e => e.VisitCount).HasColumnName("visit_count").IsRequired();
 
-        builder.Property(e => e.CreatedAt)
-            .HasColumnName("created_at")
-            .IsRequired();
+        builder.Property(e => e.CreatedAt).HasColumnName("created_at").IsRequired();
     }
 }

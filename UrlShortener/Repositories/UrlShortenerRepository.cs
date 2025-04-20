@@ -1,8 +1,8 @@
 namespace UrlShortener.Repositories;
 
-using UrlShortener.Models;
-using UrlShortener.Db;
 using Microsoft.EntityFrameworkCore;
+using UrlShortener.Db;
+using UrlShortener.Models;
 
 public class UrlShortenerRepository : IUrlShortenerRepository
 {

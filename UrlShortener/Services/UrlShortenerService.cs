@@ -18,12 +18,14 @@ public class UrlShortenerService : IUrlShortenerService
         return Guid.NewGuid().ToString("N").Substring(0, 10);
     }
 
-    public async Task<ShortenUrlResponseDto> ShortenUrlAsync(ShortenUrlRequestDto request, HttpContext httpContext)
+    public async Task<ShortenUrlResponseDto> ShortenUrlAsync(
+        ShortenUrlRequestDto request,
+        HttpContext httpContext
+    )
     {
         var currentUrl = $"{httpContext.Request.Scheme}://{httpContext.Request.Host}";
         var code = GenerateCode();
         var shortenedUrl = $"{currentUrl}/{code}";
-
 
         var shortUrlModel = new ShortUrlModel
         {
@@ -42,5 +44,4 @@ public class UrlShortenerService : IUrlShortenerService
         var shortUrlModel = await _urlShortenerRepository.GetByCodeAsync(code);
         return shortUrlModel?.OriginalUrl;
     }
-
 }
