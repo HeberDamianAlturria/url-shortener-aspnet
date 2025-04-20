@@ -14,7 +14,7 @@ var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 if (string.IsNullOrEmpty(connectionString))
 {
     throw new InvalidOperationException("Connection string is not set.");
-} 
+}
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -42,4 +42,3 @@ public class ShortUrlConfiguration : IEntityTypeConfiguration<ShortUrlModel>
             .IsRequired();
     }
 }
-    

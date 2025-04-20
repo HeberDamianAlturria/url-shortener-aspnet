@@ -29,12 +29,13 @@ public static class UrlShortenerRouter
     }
 
     public static async Task<IResult> ShortenPost(
-        HttpContext httpContext, 
-        ShortenUrlRequestDto request, 
+        HttpContext httpContext,
+        ShortenUrlRequestDto request,
         IUrlShortenerService urlShortenerService
     )
     {
-        try {
+        try
+        {
             var result = await urlShortenerService.ShortenUrlAsync(request, httpContext);
 
             if (result == null)
@@ -43,7 +44,7 @@ public static class UrlShortenerRouter
             }
 
             return Results.Ok(result);
-        } 
+        }
         catch (Exception ex)
         {
             return Results.Problem("An error occurred while processing your request.", statusCode: StatusCodes.Status500InternalServerError);
@@ -52,7 +53,8 @@ public static class UrlShortenerRouter
 
     public static async Task<IResult> RedirectUrl(string code, IUrlShortenerService urlShortenerService)
     {
-        try {
+        try
+        {
             var originalUrl = await urlShortenerService.GetOriginalUrlAsync(code);
 
             if (originalUrl == null)
@@ -61,7 +63,7 @@ public static class UrlShortenerRouter
             }
 
             return Results.Redirect(originalUrl);
-        } 
+        }
         catch (Exception ex)
         {
             return Results.Problem("An error occurred while processing your request.", statusCode: StatusCodes.Status500InternalServerError);
