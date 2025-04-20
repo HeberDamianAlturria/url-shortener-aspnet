@@ -2,6 +2,7 @@ namespace UrlShortener.Routers;
 
 using FluentValidation;
 using UrlShortener.Dtos;
+using UrlShortener.Exceptions;
 using UrlShortener.Filters;
 using UrlShortener.Services;
 
@@ -33,7 +34,8 @@ public static class UrlShortenerRouter
     public static async Task<IResult> ShortenPost(
         HttpContext httpContext,
         ShortenUrlRequestDto request,
-        IUrlShortenerService urlShortenerService
+        IUrlShortenerService urlShortenerService,
+        ILogger<ShortenUrlRequestDto> logger
     )
     {
         try
@@ -42,13 +44,24 @@ public static class UrlShortenerRouter
 
             if (result == null)
             {
-                return Results.NotFound("URL not found.");
+                return Results.NotFound(
+                    new ErrorResponseDto(
+                        Message: "URL not found",
+                        Details: "The URL could not be shortened."
+                    )
+                );
             }
 
             return Results.Ok(result);
         }
+        catch (DuplicateCodeException ex)
+        {
+            logger.LogError(ex, "Duplicate code error occurred.");
+            return Results.Problem(ex.Message, statusCode: StatusCodes.Status409Conflict);
+        }
         catch (Exception ex)
         {
+            logger.LogError(ex, "An error occurred while shortening the URL.");
             return Results.Problem(
                 "An error occurred while processing your request.",
                 statusCode: StatusCodes.Status500InternalServerError
@@ -58,7 +71,8 @@ public static class UrlShortenerRouter
 
     public static async Task<IResult> RedirectUrl(
         string code,
-        IUrlShortenerService urlShortenerService
+        IUrlShortenerService urlShortenerService,
+        ILogger<string> logger
     )
     {
         try
@@ -67,13 +81,20 @@ public static class UrlShortenerRouter
 
             if (originalUrl == null)
             {
-                return Results.NotFound("URL not found.");
+                logger.LogWarning("URL not found for code: {Code}", code);
+                return Results.NotFound(
+                    new ErrorResponseDto(
+                        Message: "URL not found",
+                        Details: $"URL not found for code: {code}."
+                    )
+                );
             }
 
             return Results.Redirect(originalUrl);
         }
         catch (Exception ex)
         {
+            logger.LogError(ex, "An error occurred while redirecting the URL.");
             return Results.Problem(
                 "An error occurred while processing your request.",
                 statusCode: StatusCodes.Status500InternalServerError

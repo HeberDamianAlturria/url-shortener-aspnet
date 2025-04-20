@@ -1,7 +1,9 @@
 namespace UrlShortener.Repositories;
 
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using UrlShortener.Db;
+using UrlShortener.Exceptions;
 using UrlShortener.Models;
 
 public class UrlShortenerRepository : IUrlShortenerRepository
@@ -15,10 +17,20 @@ public class UrlShortenerRepository : IUrlShortenerRepository
 
     public async Task<ShortUrlModel> AddAndSaveAsync(ShortUrlModel shortUrlModel)
     {
-        await _dbContext.ShortUrls.AddAsync(shortUrlModel);
-        await SaveChangesAsync();
+        try
+        {
+            await _dbContext.ShortUrls.AddAsync(shortUrlModel);
+            await SaveChangesAsync();
 
-        return shortUrlModel;
+            return shortUrlModel;
+        }
+        catch (DbUpdateException ex)
+            when (ex.InnerException is PostgresException postgresEx
+                && postgresEx.SqlState == "23505"
+            )
+        {
+            throw new DuplicateCodeException();
+        }
     }
 
     public async Task<ShortUrlModel?> GetByCodeAsync(string code)
