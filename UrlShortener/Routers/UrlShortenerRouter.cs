@@ -42,7 +42,6 @@ public static class UrlShortenerRouter
                 return Results.NotFound("URL not found.");
             }
 
-            // Assuming the service returns a shortened URL
             return Results.Ok(result);
         } 
         catch (Exception ex)

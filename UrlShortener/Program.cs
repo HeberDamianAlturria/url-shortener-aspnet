@@ -4,7 +4,17 @@ using UrlShortener.Repositories;
 using UrlShortener.Services;
 
 using FluentValidation;
+using dotenv.net;
 using Microsoft.EntityFrameworkCore;
+
+DotEnv.Load();
+
+var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException("Connection string is not set.");
+} 
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,7 +38,9 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 // Add DbContext for URL shortener.
 builder.Services.AddDbContext<UrlShortenerDbContext>(options =>
-    options.UseInMemoryDatabase("UrlShortenerDb"));
+{
+    options.UseNpgsql(connectionString);
+});
 
 // Add repositories and services.
 builder.Services.AddScoped<IUrlShortenerRepository, UrlShortenerRepository>();

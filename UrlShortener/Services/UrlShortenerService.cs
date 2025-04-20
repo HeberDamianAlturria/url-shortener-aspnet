@@ -15,7 +15,7 @@ public class UrlShortenerService : IUrlShortenerService
 
     private string GenerateCode()
     {
-        return Guid.NewGuid().ToString("N").Substring(0, 8);
+        return Guid.NewGuid().ToString("N").Substring(0, 10);
     }
 
     public async Task<ShortenUrlResponseDto> ShortenUrlAsync(ShortenUrlRequestDto request, HttpContext httpContext)
