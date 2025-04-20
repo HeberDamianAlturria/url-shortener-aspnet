@@ -44,4 +44,13 @@ public class UrlShortenerService : IUrlShortenerService
         var shortUrlModel = await _urlShortenerRepository.GetByCodeAsync(code);
         return shortUrlModel?.OriginalUrl;
     }
+
+    public async Task UpdateVisitCountAsync(string code)
+    {
+        var shortUrlModel = await _urlShortenerRepository.GetByCodeAsync(code);
+        if (shortUrlModel != null)
+        {
+            await _urlShortenerRepository.UpdateVisitCountAsync(shortUrlModel);
+        }
+    }
 }

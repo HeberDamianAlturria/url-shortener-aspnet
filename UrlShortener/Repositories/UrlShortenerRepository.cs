@@ -42,4 +42,10 @@ public class UrlShortenerRepository : IUrlShortenerRepository
     {
         await _dbContext.SaveChangesAsync();
     }
+
+    public async Task UpdateVisitCountAsync(ShortUrlModel shortUrlModel)
+    {
+        shortUrlModel.VisitCount++;
+        await SaveChangesAsync();
+    }
 }

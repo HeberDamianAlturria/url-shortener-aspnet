@@ -10,4 +10,6 @@ public interface IUrlShortenerService
     );
 
     Task<string?> GetOriginalUrlAsync(string code);
+
+    Task UpdateVisitCountAsync(string code);
 }

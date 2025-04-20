@@ -90,6 +90,8 @@ public static class UrlShortenerRouter
                 );
             }
 
+            await urlShortenerService.UpdateVisitCountAsync(code);
+
             return Results.Redirect(originalUrl);
         }
         catch (Exception ex)
